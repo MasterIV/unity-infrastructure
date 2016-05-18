@@ -13,7 +13,7 @@ public class SubscriptionBinding<T>
 		public FieldInfo Source;
 	}
 
-	private List<Binding> _bindings;
+	private readonly List<Binding> _bindings;
 
 	public void Update(T model)
 	{

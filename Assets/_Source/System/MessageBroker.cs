@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class MessageBroker
 {
-	private Dictionary<Type, IList> _subscriptions;
+	private readonly Dictionary<Type, IList> _subscriptions;
 
 	public MessageBroker()
 	{

@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CharacterService
 {
-	private CharacterModel _character;
-	private MessageBroker _broker;
+	private readonly CharacterModel _character;
+	private readonly MessageBroker _broker;
 
 	public CharacterService(CharacterModel character, MessageBroker broker)
 	{

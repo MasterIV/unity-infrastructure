@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using JetBrains.Annotations;
 using UnityEngine.UI;
 
 public class CharacterView : BaseView
@@ -15,11 +16,8 @@ public class CharacterView : BaseView
 		_service = service;
 	}
 
-	// Use this for initialization
-	void Start () {
-
-	 Debug.Log("Bar");
-
+	void Start()
+	{
 		Subscribe<CharacterModel>()
 			.Bind(CharacterName, "Name")
 			.Bind(CharacterLevel, "Level")
