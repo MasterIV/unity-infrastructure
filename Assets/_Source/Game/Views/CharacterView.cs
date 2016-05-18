@@ -14,10 +14,7 @@ public class CharacterView : BaseView
 	public void SetService(CharacterService service)
 	{
 		_service = service;
-	}
 
-	void Start()
-	{
 		Subscribe<CharacterModel>()
 			.Bind(CharacterName, "Name")
 			.Bind(CharacterLevel, "Level")
