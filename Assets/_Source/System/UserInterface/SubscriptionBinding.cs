@@ -18,9 +18,9 @@ public class SubscriptionBinding<T>
 	private class SingleBinding : IBinding
 	{
 		public object Target { get; private set; }
-		private readonly PropertyBinding<T> _source;
+		private readonly PropertyReader<T> _source;
 
-		public SingleBinding(object target, PropertyBinding<T> source)
+		public SingleBinding(object target, PropertyReader<T> source)
 		{
 			Target = target;
 			_source = source;
@@ -36,9 +36,9 @@ public class SubscriptionBinding<T>
 	{
 		public object Target { get; private set; }
 		private readonly string _format;
-		private readonly PropertyBinding<T>[] _sources;
+		private readonly PropertyReader<T>[] _sources;
 
-		public FormattedBinding(object target, PropertyBinding<T>[] source, string format)
+		public FormattedBinding(object target, PropertyReader<T>[] source, string format)
 		{
 			Target = target;
 			_sources = source;
@@ -91,7 +91,7 @@ public class SubscriptionBinding<T>
 		if (element == null)
 			return this;
 
-		_bindings.Add(new SingleBinding(element, new PropertyBinding<T>(_prefix + property)));
+		_bindings.Add(new SingleBinding(element, new PropertyReader<T>(_prefix + property)));
 
 		return this;
 	}
@@ -101,10 +101,10 @@ public class SubscriptionBinding<T>
 		if (element == null)
 			return this;
 
-		PropertyBinding<T>[] sources = new PropertyBinding<T>[properties.Length];
+		PropertyReader<T>[] sources = new PropertyReader<T>[properties.Length];
 
 		for (int i = 0; i < properties.Length; i++)
-			sources[i] = new PropertyBinding<T>(_prefix + properties[i]);
+			sources[i] = new PropertyReader<T>(_prefix + properties[i]);
 
 		_bindings.Add(new FormattedBinding(element, sources, format));
 

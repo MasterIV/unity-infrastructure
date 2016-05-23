@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.UI;
 
-public class PropertyBinding<T>
+public class PropertyReader<T>
 {
-	private interface IBindingSource
+	private interface IReaderSource
 	{
 		object GetValue(object model);
 		Type GetValueType();
 	}
 
-	private class FieldBindingSource : IBindingSource
+	private class FieldReaderSource : IReaderSource
 	{
 		private readonly FieldInfo _source;
 
-		public FieldBindingSource(FieldInfo source)
+		public FieldReaderSource(FieldInfo source)
 		{
 			_source = source;
 		}
@@ -34,11 +34,11 @@ public class PropertyBinding<T>
 		}
 	}
 
-	private class PropertyBindingSource : IBindingSource
+	private class PropertyReaderSource : IReaderSource
 	{
 		private readonly PropertyInfo _source;
 
-		public PropertyBindingSource(PropertyInfo source)
+		public PropertyReaderSource(PropertyInfo source)
 		{
 			_source = source;
 		}
@@ -54,11 +54,11 @@ public class PropertyBinding<T>
 		}
 	}
 
-	private class MethodBindingSource : IBindingSource
+	private class MethodReaderSource : IReaderSource
 	{
 		private readonly MethodInfo _source;
 
-		public MethodBindingSource(MethodInfo source)
+		public MethodReaderSource(MethodInfo source)
 		{
 			_source = source;
 		}
@@ -74,13 +74,13 @@ public class PropertyBinding<T>
 		}
 	}
 
-	private readonly IBindingSource[] _source;
+	private readonly IReaderSource[] _source;
 
-	public PropertyBinding(string source)
+	public PropertyReader(string source)
 	{
 		var path = source.Split('.');
 		var type = typeof(T);
-		_source = new IBindingSource[path.Length];
+		_source = new IReaderSource[path.Length];
 
 		for (int i = 0; i < path.Length; i++)
 		{
@@ -89,19 +89,19 @@ public class PropertyBinding<T>
 		}
 	}
 
-	private IBindingSource InitSource(Type type, string source)
+	private IReaderSource InitSource(Type type, string source)
 	{
 		var field = type.GetField(source);
 		if (field != null)
-			return new FieldBindingSource(field);
+			return new FieldReaderSource(field);
 
 		var property = type.GetProperty(source);
 		if (property != null)
-			return new PropertyBindingSource(property);
+			return new PropertyReaderSource(property);
 
 		var method = type.GetMethod(source);
 		if (method != null)
-			return new MethodBindingSource(method);
+			return new MethodReaderSource(method);
 
 		throw new Exception("Source not found: "+source);
 	}
