@@ -8,8 +8,14 @@ public class Initializer : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		var character = new CharacterModel()
+		{
+			Name = "Dario",
+			Level = 1,
+			Stats = new CharacterModel.Attributes() {Attack = 10, Defence = 20}
+		};
+
 		var broker = new MessageBroker();
-		var character = new CharacterModel() {Name = "Dario", Level = 1};
 		var service = new CharacterService(character, broker);
 
 		CharacterView.SetDependencies(broker);

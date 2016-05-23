@@ -16,9 +16,8 @@ public class CharacterView : BaseView
 		_service = service;
 
 		Subscribe<CharacterModel>()
-			.Bind(CharacterName, "Name")
+			.Format(CharacterName, "Der {0} ist ein kleiner wicht auf Level {1} und hat Attack {2}", "Name", "Level", "Stats.Attack")
 			.Bind(CharacterLevel, "Level")
-			.Translate(Headline, "Character Profile")
 			.Init();
 	}
 
