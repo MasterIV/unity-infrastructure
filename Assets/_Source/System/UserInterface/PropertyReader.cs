@@ -6,7 +6,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.UI;
 
-public class PropertyReader<T>
+public interface IPropertyReader
+{
+	object GetValue(object model);
+}
+
+public class PropertyReader<T> : IPropertyReader
 {
 	private interface IReaderSource
 	{

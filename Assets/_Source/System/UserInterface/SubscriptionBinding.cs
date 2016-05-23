@@ -7,57 +7,15 @@ using System.ComponentModel;
 using System.Reflection;
 using UnityEngine.UI;
 
-public class SubscriptionBinding<T>
+public abstract class InterfaceBinding<T>
 {
-	private interface IBinding
-	{
-		object Target { get; }
-		object GetValue(object model);
-	}
-
-	private class SingleBinding : IBinding
-	{
-		public object Target { get; private set; }
-		private readonly PropertyReader<T> _source;
-
-		public SingleBinding(object target, PropertyReader<T> source)
-		{
-			Target = target;
-			_source = source;
-		}
-
-		public object GetValue(object model)
-		{
-			return _source.GetValue(model);
-		}
-	}
-
-	private class FormattedBinding : IBinding
-	{
-		public object Target { get; private set; }
-		private readonly string _format;
-		private readonly PropertyReader<T>[] _sources;
-
-		public FormattedBinding(object target, PropertyReader<T>[] source, string format)
-		{
-			Target = target;
-			_sources = source;
-			_format = format;
-		}
-
-		public object GetValue(object model)
-		{
-			string[] values = new string[_sources.Length];
-
-			for (int i = 0; i < _sources.Length; i++)
-				values[i] = _sources[i].GetValue(model).ToString();
-
-			return String.Format(_format, values);
-		}
-	}
-
 	private string _prefix = "";
 	private readonly List<IBinding> _bindings;
+
+	protected InterfaceBinding()
+	{
+		_bindings = new List<IBinding>();
+	}
 
 	public void Update(T model)
 	{
@@ -74,19 +32,13 @@ public class SubscriptionBinding<T>
 		}
 	}
 
-	public SubscriptionBinding(MessageBroker broker)
-	{
-		_bindings = new List<IBinding>();
-		broker.Sub<T>(Update);
-	}
-
-	public SubscriptionBinding<T> Prefix(string prefix)
+	public InterfaceBinding<T> Prefix(string prefix)
 	{
 		_prefix = prefix;
 		return this;
 	}
 
-	public SubscriptionBinding<T> Bind(object element, string property)
+	public InterfaceBinding<T> Bind(object element, string property)
 	{
 		if (element == null)
 			return this;
@@ -96,12 +48,12 @@ public class SubscriptionBinding<T>
 		return this;
 	}
 
-	public SubscriptionBinding<T> Format(object element, string format, params string[] properties)
+	public InterfaceBinding<T> Format(object element, string format, params string[] properties)
 	{
 		if (element == null)
 			return this;
 
-		PropertyReader<T>[] sources = new PropertyReader<T>[properties.Length];
+		var sources = new PropertyReader<T>[properties.Length];
 
 		for (int i = 0; i < properties.Length; i++)
 			sources[i] = new PropertyReader<T>(_prefix + properties[i]);
@@ -111,7 +63,35 @@ public class SubscriptionBinding<T>
 		return this;
 	}
 
-	public void Init()
+	public abstract void Init();
+}
+
+
+public class SubscriptionBinding<T> : InterfaceBinding<T>
+{
+
+	public SubscriptionBinding(MessageBroker broker)
 	{
+		broker.Sub<T>(Update);
+	}
+
+	public override void Init()
+	{
+
+	}
+}
+
+public class ObjectBinding<T>: InterfaceBinding<T>
+{
+	private T _subject;
+
+	public ObjectBinding(T subject)
+	{
+		_subject = subject;
+	}
+
+	public override void Init()
+	{
+		Update(_subject);
 	}
 }

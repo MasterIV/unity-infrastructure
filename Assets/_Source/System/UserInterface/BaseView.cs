@@ -14,4 +14,9 @@ public abstract class BaseView : MonoBehaviour
 	{
 		return new SubscriptionBinding<T>(_broker);
 	}
+
+	protected ObjectBinding<T> With<T>(T subject)
+	{
+		return new ObjectBinding<T>(subject);
+	}
 }

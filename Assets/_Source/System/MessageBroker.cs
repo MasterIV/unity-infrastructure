@@ -7,10 +7,17 @@ using UnityEngine.UI;
 public class MessageBroker
 {
 	private readonly Dictionary<Type, IList> _subscriptions;
+	private readonly List<Action<object>> _gloablSubscriptions;
 
 	public MessageBroker()
 	{
 		_subscriptions = new Dictionary<Type, IList>();
+		_gloablSubscriptions = new List<Action<object>>();
+	}
+
+	public void SubGlobal(Action<object> callback)
+	{
+		_gloablSubscriptions.Add(callback);
 	}
 
 	public void Pub<T>(T obj)
@@ -22,6 +29,8 @@ public class MessageBroker
 		var list = (List<Action<T>>) _subscriptions[key];
 		for (int i = 0; i < list.Count; i++)
 			list[i](obj);
+		for (int i = 0; i < _gloablSubscriptions.Count; i++)
+			_gloablSubscriptions[i](obj);
 	}
 
 	public void Sub<T>(Action<T> callback)
@@ -40,5 +49,10 @@ public class MessageBroker
 		}
 
 		list.Add(callback);
+	}
+
+	public void Unsubscribe<T>(Action<T> callback)
+	{
+		// TODO: implement :D
 	}
 }
